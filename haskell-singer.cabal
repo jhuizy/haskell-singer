@@ -1,0 +1,36 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: cc9fe8eed7f46c3bbbefda8ed7f60fcf535033fd039c2d1695b4d22654d2cfff
+
+name:           haskell-singer
+version:        0.1.0.0
+category:       Web
+homepage:       https://github.com/githubuser/haskell-singer#readme
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2019 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+executable haskell-singer
+  main-is: Main.hs
+  other-modules:
+      Types
+      Paths_haskell_singer
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , conduit
+    , containers
+    , csv-conduit
+    , text
+  default-language: Haskell2010
