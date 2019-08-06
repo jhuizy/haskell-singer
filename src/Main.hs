@@ -9,18 +9,20 @@ import qualified Data.Text as T
 import           Types
 import Data.Aeson
 
-type TapT m = ConduitT () Message m ()
-type Tap = TapT IO
-type Target m = ConduitT Message () m ()
+type Tap m = ConduitT () Message (ResourceT m) ()
+type Target m = ConduitT Message () (ResourceT m) ()
 
 messageTransformer :: Monad m => FilePath -> ConduitT (MapRow T.Text) Message m ()
 messageTransformer fp = mapC $ \map -> MessageRecord (RecordMessage fp "" (M.mapKeys T.unpack . fmap T.unpack $ map)) 
 
-csvTapT :: (MonadResource m, MonadThrow m) => FilePath -> TapT m 
-csvTapT fp = sourceFile fp .| intoCSV defCSVSettings .| messageTransformer fp
+csvTap :: (MonadIO m, MonadThrow m) => FilePath -> Tap m 
+csvTap fp = sourceFile fp .| intoCSV defCSVSettings .| messageTransformer fp
 
-runTap :: TapT m -> IO ()
+-- csvTarget :: (MonadIO m, MonadThrow m) => FilePath -> Target m
+-- csvTarget fp = mapC encode .| sinkFile fp
+
+runTap :: (MonadUnliftIO m, MonadIO m, MonadThrow m) => Tap m -> m ()
 runTap t = runConduitRes $ t .| mapC encode .| printC 
 
 main :: IO ()
-main = runTap $ csvTapT "file"
+main = runTap $ csvTap "test.csv"
